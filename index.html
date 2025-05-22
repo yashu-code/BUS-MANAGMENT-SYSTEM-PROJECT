@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bus Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+    
+    body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+      z-index: -1;
+    }
+  
+    header {
+      background: #1a535c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid #f0a6ca;
+    }
+  
+    nav {
+      background: #4ecdc4;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 15px 0;
+      backdrop-filter: blur(8px);
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 18px;
+    }
+    nav a:hover {
+      color: #f0a6ca;
+      transform: scale(1.1);
+    }
+  
+    .container {
+      max-width: 1000px;
+      margin: 50px auto;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px);
+      animation: fadeIn 1s ease-in-out;
+      color: #fff;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 35px;
+      color: #f0a6ca;
+      font-weight: 700;
+      font-size: 32px;
+    }
+    label {
+      display: block;
+      margin: 20px 0 8px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 15px;
+    }
+    input::placeholder, select {
+      color: #ddd;
+    }
+    input:focus, select:focus {
+      border: 2px solid #f0a6ca;
+      background: rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+    button {
+      background: #f0a6ca;
+      color: #240046;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #ffcad4;
+      transform: scale(1.05);
+    }
+    .success, .error {
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .success { color: #90ee90; }
+    .error { color: #ff6b6b; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 12px;
+      text-align: center;
+      font-size: 15px;
+      color: white;
+    }
+    th {
+      background-color: rgba(90, 24, 154, 0.7);
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+  
+</head>
+<body>
+  <header>
+    Bus Management System
+  </header>
+  
+  <nav>
+    <a href="#">Add Bus</a>
+    <a href="#busTable" onclick="loadBuses()">View Buses</a>
+    <a href="schedules.html">Schedules</a>
+    <a href="passengers.html">Passengers</a>
+    <a href="seat.html">Seats</a>
+    <a href="station.html">Station</a>
+    <a href="staff.html">Staff</a>
+  </nav>
+
+  <div class="container">
+    <h2>Add a New Bus</h2>
+    <form id="busForm">
+      <label for="busNumber">Bus Number:</label>
+      <input type="text" id="busNumber" required />
+
+      <label for="capacity">Capacity:</label>
+      <input type="number" id="capacity" required />
+
+      <label for="type">Bus Type:</label>
+      <select id="type" required>
+        <option value="">Select Type</option>
+        <option value="AC">AC</option>
+        <option value="Non-AC">Non-AC</option>
+        <option value="Sleeper">Sleeper</option>
+        <option value="Luxury">Luxury</option>
+      </select>
+
+      <label for="status">Status:</label>
+      <select id="status" required>
+        <option value="">Select Status</option>
+        <option value="Active">Active</option>
+        <option value="Under Maintenance">Under Maintenance</option>
+        <option value="Out of Service">Out of Service</option>
+      </select>
+
+      <button type="submit">Add Bus</button>
+    </form>
+    <div class="success" id="successMessage"></div>
+    <div class="error" id="errorMessage"></div>
+
+    <h2>Available Buses</h2>
+    <table id="busTable">
+      <thead>
+        <tr>
+          <th>Bus Number</th>
+          <th>Capacity</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Global variable to track if we're in edit mode
+let isEditMode = false;
+let currentEditBusNumber = null;
+
+document.getElementById("busForm").addEventListener("submit", handleFormSubmit);
+
+async function handleFormSubmit(e) {
+  e.preventDefault();
+
+  const busNumber = document.getElementById("busNumber").value;
+  const capacity = document.getElementById("capacity").value;
+  const type = document.getElementById("type").value;
+  const status = document.getElementById("status").value;
+
+  // Clear previous messages
+  document.getElementById("successMessage").textContent = "";
+  document.getElementById("errorMessage").textContent = "";
+
+  try {
+    let response;
+    
+    if (isEditMode) {
+      // Update existing bus
+      response = await fetch(`http://localhost:3000/api/buses/${currentEditBusNumber}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ capacity, type, status })
+      });
+    } else {
+      // Create new bus
+      response = await fetch("http://localhost:3000/api/buses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ busNumber, capacity, type, status })
+      });
+    }
+
+    const result = await response.json();
+    console.log('Server response:', result); // For debugging
+
+    if (response.ok) {
+      const successMsg = isEditMode ? "Bus updated successfully!" : "Bus added successfully!";
+      document.getElementById("successMessage").textContent = successMsg;
+      document.getElementById("errorMessage").textContent = "";
+      
+      // Reset form and edit mode
+      resetForm();
+      loadBuses();
+    } else {
+      document.getElementById("errorMessage").textContent = result.error || "Operation failed.";
+      document.getElementById("successMessage").textContent = "";
+    }
+  } catch (error) {
+    console.error('Network error:', error);
+    document.getElementById("errorMessage").textContent = "Network error. Please check your connection and try again.";
+    document.getElementById("successMessage").textContent = "";
+  }
+}
+
+async function loadBuses() {
+  console.log('Loading buses...'); // For debugging
+  
+  try {
+    const response = await fetch("http://localhost:3000/api/buses");
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    const buses = await response.json();
+    console.log("Buses data received:", buses); // For debugging
+    
+    const tbody = document.querySelector("#busTable tbody");
+    tbody.innerHTML = ""; // Clear existing rows
+    
+    if (!buses || buses.length === 0) {
+      // Display a message if no buses are found
+      tbody.innerHTML = '<tr><td colspan="5">No buses available</td></tr>';
+      return;
+    }
+    
+    // Create and append each row
+    buses.forEach(bus => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${bus.BusNumber || 'N/A'}</td>
+        <td>${bus.Capacity || 'N/A'}</td>
+        <td>${bus.Type || 'N/A'}</td>
+        <td>${bus.Status || 'N/A'}</td>
+        <td>
+          <button onclick="editBus('${bus.BusNumber}', '${bus.Capacity}', '${bus.Type}', '${bus.Status}')" style="margin-right: 5px;">Edit</button>
+          <button onclick="deleteBus('${bus.BusNumber}')" style="background-color: #ff6b6b;">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  } catch (error) {
+    console.error("Error loading buses:", error);
+    // Display error in the table
+    const tbody = document.querySelector("#busTable tbody");
+    tbody.innerHTML = `<tr><td colspan="5">Error loading buses: ${error.message}</td></tr>`;
+  }
+}
+
+function editBus(busNumber, capacity, type, status) {
+  console.log('Editing bus:', busNumber); // For debugging
+  
+  // Fill the form with bus data
+  document.getElementById("busNumber").value = busNumber;
+  document.getElementById("capacity").value = capacity;
+  document.getElementById("type").value = type;
+  document.getElementById("status").value = status;
+  
+  // Disable bus number field during edit
+  document.getElementById("busNumber").disabled = true;
+  
+  // Set edit mode
+  isEditMode = true;
+  currentEditBusNumber = busNumber;
+  
+  // Change button text
+  const submitButton = document.querySelector("button[type='submit']");
+  submitButton.textContent = "Update Bus";
+  
+  // Scroll to form
+  document.getElementById("busForm").scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetForm() {
+  // Reset form
+  document.getElementById("busForm").reset();
+  
+  // Enable bus number field
+  document.getElementById("busNumber").disabled = false;
+  
+  // Reset edit mode
+  isEditMode = false;
+  currentEditBusNumber = null;
+  
+  // Reset button text
+  const submitButton = document.querySelector("button[type='submit']");
+  submitButton.textContent = "Add Bus";
+  
+  // Clear messages
+  document.getElementById("successMessage").textContent = "";
+  document.getElementById("errorMessage").textContent = "";
+}
+
+async function deleteBus(busNumber) {
+  console.log('Deleting bus:', busNumber); // For debugging
+  
+  if (!confirm(`Are you sure you want to delete bus ${busNumber}?`)) return;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/buses/${busNumber}`, {
+      method: "DELETE"
+    });
+
+    const result = await response.json();
+    console.log('Delete response:', result); // For debugging
+
+    if (response.ok) {
+      alert("Bus deleted successfully.");
+      loadBuses();
+      
+      // If we're currently editing this bus, reset the form
+      if (currentEditBusNumber === busNumber) {
+        resetForm();
+      }
+    } else {
+      alert(`Failed to delete bus: ${result.error || 'Unknown error'}`);
+    }
+  } catch (error) {
+    console.error("Delete error:", error);
+    alert("Error deleting bus. Please try again.");
+  }
+}
+
+// Add a cancel button functionality
+function addCancelButton() {
+  const form = document.getElementById("busForm");
+  const submitButton = document.querySelector("button[type='submit']");
+  
+  // Check if cancel button already exists
+  if (!document.getElementById("cancelButton")) {
+    const cancelButton = document.createElement("button");
+    cancelButton.type = "button";
+    cancelButton.id = "cancelButton";
+    cancelButton.textContent = "Cancel";
+    cancelButton.style.backgroundColor = "#6c757d";
+    cancelButton.style.marginLeft = "10px";
+    cancelButton.style.display = "none";
+    cancelButton.onclick = resetForm;
+    
+    submitButton.parentNode.insertBefore(cancelButton, submitButton.nextSibling);
+  }
+}
+
+// Show/hide cancel button based on edit mode
+function toggleCancelButton() {
+  const cancelButton = document.getElementById("cancelButton");
+  if (cancelButton) {
+    cancelButton.style.display = isEditMode ? "inline-block" : "none";
+  }
+}
+
+// Initialize page
+window.onload = function() {
+  console.log('Page loaded, initializing...'); // For debugging
+  addCancelButton();
+  loadBuses();
+};
+  </script>
+</body>
+</html>

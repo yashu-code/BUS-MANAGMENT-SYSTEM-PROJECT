@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bus Management System - Tickets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+    
+    body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+      z-index: -1;
+    }
+  
+    header {
+      background: #1a535c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid #f0a6ca;
+    }
+  
+    nav {
+      background: #4ecdc4;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 15px 0;
+      backdrop-filter: blur(8px);
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 18px;
+    }
+    nav a:hover {
+      color: #f0a6ca;
+      transform: scale(1.1);
+    }
+  
+    .container {
+      max-width: 1000px;
+      margin: 50px auto;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 50px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px);
+      animation: fadeIn 1s ease-in-out;
+      color: #fff;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 35px;
+      color: #f0a6ca;
+      font-weight: 700;
+      font-size: 32px;
+    }
+    label {
+      display: block;
+      margin: 20px 0 8px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+    input::placeholder, select {
+      color: #ddd;
+    }
+    input:focus, select:focus {
+      border: 2px solid #f0a6ca;
+      background: rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+    button {
+      background: #f0a6ca;
+      color: #240046;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #ffcad4;
+      transform: scale(1.05);
+    }
+    .success, .error {
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .success { color: #90ee90; }
+    .error { color: #ff6b6b; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 12px;
+      text-align: center;
+      font-size: 15px;
+      color: white;
+    }
+    th {
+      background-color: rgba(90, 24, 154, 0.7);
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .schedule-info {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      display: none;
+    }
+    .schedule-info.show {
+      display: block;
+    }
+    .schedule-info h4 {
+      margin: 0 0 10px 0;
+      color: #f0a6ca;
+    }
+    .schedule-info p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Bus Management System - Tickets
+  </header>
+  
+  <nav>
+    <a href="paste.txt">Add Bus</a>
+    <a href="#busTable" onclick="loadBuses()">View Buses</a>
+    <a href="schedules.html">Schedules</a>
+    <a href="passengers.html">Passengers</a>
+    <a href="seat.html">Seats</a>
+    <a href="station.html">Station</a>
+    <a href="#" style="color: #f0a6ca;">Tickets</a>
+  </nav>
+
+  <div class="container">
+    <h2>Book a New Ticket</h2>
+    <form id="ticketForm">
+      <div class="form-row">
+        <div>
+          <label for="ticketId">Ticket ID:</label>
+          <input type="number" id="ticketId" required />
+        </div>
+        <div>
+          <label for="passengerId">Passenger:</label>
+          <select id="passengerId" required>
+            <option value="">Select Passenger</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="scheduleId">Schedule:</label>
+          <select id="scheduleId" required>
+            <option value="">Select Schedule</option>
+          </select>
+        </div>
+        <div>
+          <label for="price">Price (₹):</label>
+          <input type="number" id="price" step="0.01" min="0" required />
+        </div>
+      </div>
+
+      <div class="schedule-info" id="scheduleInfo">
+        <h4>Schedule Information</h4>
+        <p><strong>Bus:</strong> <span id="scheduleInfoBus">-</span></p>
+        <p><strong>Route:</strong> <span id="scheduleInfoRoute">-</span></p>
+        <p><strong>Date:</strong> <span id="scheduleInfoDate">-</span></p>
+        <p><strong>Time:</strong> <span id="scheduleInfoTime">-</span></p>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label for="bookingDate">Booking Date:</label>
+          <input type="date" id="bookingDate" required />
+        </div>
+        <div>
+          <label for="paymentMethod">Payment Method:</label>
+          <select id="paymentMethod" required>
+            <option value="">Select Payment Method</option>
+            <option value="Cash">Cash</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="UPI">UPI</option>
+            <option value="Net Banking">Net Banking</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit">Book Ticket</button>
+      <button type="button" id="cancelButton" style="background-color: #6c757d; margin-left: 10px; display: none;">Cancel</button>
+    </form>
+    <div class="success" id="successMessage"></div>
+    <div class="error" id="errorMessage"></div>
+
+    <h2>All Tickets</h2>
+    <table id="ticketTable">
+      <thead>
+        <tr>
+          <th>Ticket ID</th>
+          <th>Passenger</th>
+          <th>Bus Number</th>
+          <th>Route</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Price</th>
+          <th>Payment Method</th>
+          <th>Booking Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Global variables
+    let isEditMode = false;
+    let currentEditTicketId = null;
+
+    // Initialize page
+    window.onload = function() {
+      console.log('Ticket page loaded, initializing...');
+      loadPassengers();
+      loadSchedules();
+      loadTickets();
+      setDefaultBookingDate();
+      
+      // Add event listeners
+      document.getElementById("ticketForm").addEventListener("submit", handleFormSubmit);
+      document.getElementById("cancelButton").addEventListener("click", resetForm);
+      document.getElementById("scheduleId").addEventListener("change", showScheduleInfo);
+    };
+
+    // Set default booking date to today
+    function setDefaultBookingDate() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById("bookingDate").value = today;
+    }
+
+    // Load passengers for dropdown
+    async function loadPassengers() {
+      try {
+        const response = await fetch("http://localhost:3000/api/passengers");
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        const passengers = await response.json();
+        const select = document.getElementById("passengerId");
+        
+        // Clear existing options except first
+        select.innerHTML = '<option value="">Select Passenger</option>';
+        
+        passengers.forEach(passenger => {
+          const option = document.createElement('option');
+          option.value = passenger.PassengerID;
+          option.textContent = `${passenger.Name} (${passenger.Contact})`;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error loading passengers:", error);
+        showError("Failed to load passengers. Please refresh the page.");
+      }
+    }
+
+    // Load schedules for dropdown
+    async function loadSchedules() {
+      try {
+        const response = await fetch("http://localhost:3000/api/schedules");
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        const schedules = await response.json();
+        const select = document.getElementById("scheduleId");
+        
+        // Clear existing options except first
+        select.innerHTML = '<option value="">Select Schedule</option>';
+        
+        schedules.forEach(schedule => {
+          const option = document.createElement('option');
+          option.value = schedule.ScheduleID;
+          option.textContent = `${schedule.BusNumber} - ${schedule.StartStationName} to ${schedule.EndStationName} (${schedule.Date})`;
+          option.dataset.busNumber = schedule.BusNumber;
+          option.dataset.busId = schedule.BusID;
+          option.dataset.route = `${schedule.StartStationName} to ${schedule.EndStationName}`;
+          option.dataset.date = schedule.Date;
+          option.dataset.time = `${schedule.DepartureTime} - ${schedule.ArrivalTime}`;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error loading schedules:", error);
+        showError("Failed to load schedules. Please refresh the page.");
+      }
+    }
+
+    // Show schedule information when schedule is selected
+    function showScheduleInfo() {
+      const select = document.getElementById("scheduleId");
+      const selectedOption = select.options[select.selectedIndex];
+      const scheduleInfo = document.getElementById("scheduleInfo");
+      
+      if (selectedOption.value) {
+        document.getElementById("scheduleInfoBus").textContent = selectedOption.dataset.busNumber;
+        document.getElementById("scheduleInfoRoute").textContent = selectedOption.dataset.route;
+        document.getElementById("scheduleInfoDate").textContent = selectedOption.dataset.date;
+        document.getElementById("scheduleInfoTime").textContent = selectedOption.dataset.time;
+        scheduleInfo.classList.add("show");
+      } else {
+        scheduleInfo.classList.remove("show");
+      }
+    }
+
+    // Handle form submission
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const ticketId = document.getElementById("ticketId").value;
+      const passengerId = document.getElementById("passengerId").value;
+      const scheduleId = document.getElementById("scheduleId").value;
+      const price = document.getElementById("price").value;
+      const bookingDate = document.getElementById("bookingDate").value;
+      const paymentMethod = document.getElementById("paymentMethod").value;
+
+      // Get bus ID from selected schedule
+      const scheduleSelect = document.getElementById("scheduleId");
+      const selectedSchedule = scheduleSelect.options[scheduleSelect.selectedIndex];
+      const busId = selectedSchedule.dataset.busId;
+
+      clearMessages();
+
+      try {
+        let response;
+        
+        if (isEditMode) {
+          // Update existing ticket
+          response = await fetch(`http://localhost:3000/api/tickets/${currentEditTicketId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              passengerId, 
+              busId, 
+              scheduleId, 
+              price, 
+              bookingDate, 
+              paymentMethod 
+            })
+          });
+        } else {
+          // Create new ticket
+          response = await fetch("http://localhost:3000/api/tickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              ticketId, 
+              passengerId, 
+              busId, 
+              scheduleId, 
+              price, 
+              bookingDate, 
+              paymentMethod 
+            })
+          });
+        }
+
+        const result = await response.json();
+
+        if (response.ok) {
+          const successMsg = isEditMode ? "Ticket updated successfully!" : "Ticket booked successfully!";
+          showSuccess(successMsg);
+          resetForm();
+          loadTickets();
+        } else {
+          showError(result.error || "Operation failed.");
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+        showError("Network error. Please check your connection and try again.");
+      }
+    }
+
+    // Load all tickets
+    async function loadTickets() {
+      try {
+        const response = await fetch("http://localhost:3000/api/tickets");
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        const tickets = await response.json();
+        const tbody = document.querySelector("#ticketTable tbody");
+        tbody.innerHTML = "";
+        
+        if (!tickets || tickets.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10">No tickets found</td></tr>';
+          return;
+        }
+        
+        tickets.forEach(ticket => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${ticket.TicketID}</td>
+            <td>${ticket.PassengerName || 'N/A'}</td>
+            <td>${ticket.BusNumber || 'N/A'}</td>
+            <td>${ticket.Route || 'N/A'}</td>
+            <td>${ticket.ScheduleDate || 'N/A'}</td>
+            <td>${ticket.ScheduleTime || 'N/A'}</td>
+            <td>₹${ticket.Price || '0.00'}</td>
+            <td>${ticket.PaymentMethod || 'N/A'}</td>
+            <td>${ticket.BookingDate || 'N/A'}</td>
+            <td>
+              <button onclick="editTicket(${ticket.TicketID}, ${ticket.PassengerID}, ${ticket.ScheduleID}, '${ticket.Price}', '${ticket.BookingDate}', '${ticket.PaymentMethod}')" style="margin-right: 5px;">Edit</button>
+              <button onclick="deleteTicket(${ticket.TicketID})" style="background-color: #ff6b6b;">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Error loading tickets:", error);
+        const tbody = document.querySelector("#ticketTable tbody");
+        tbody.innerHTML = `<tr><td colspan="10">Error loading tickets: ${error.message}</td></tr>`;
+      }
+    }
+
+    // Edit ticket
+    function editTicket(ticketId, passengerId, scheduleId, price, bookingDate, paymentMethod) {
+      // Fill the form with ticket data
+      document.getElementById("ticketId").value = ticketId;
+      document.getElementById("passengerId").value = passengerId;
+      document.getElementById("scheduleId").value = scheduleId;
+      document.getElementById("price").value = price;
+      document.getElementById("bookingDate").value = bookingDate;
+      document.getElementById("paymentMethod").value = paymentMethod;
+      
+      // Show schedule info
+      showScheduleInfo();
+      
+      // Disable ticket ID field during edit
+      document.getElementById("ticketId").disabled = true;
+      
+      // Set edit mode
+      isEditMode = true;
+      currentEditTicketId = ticketId;
+      
+      // Change button text and show cancel button
+      document.querySelector("button[type='submit']").textContent = "Update Ticket";
+      document.getElementById("cancelButton").style.display = "inline-block";
+      
+      // Scroll to form
+      document.getElementById("ticketForm").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Delete ticket
+    async function deleteTicket(ticketId) {
+      if (!confirm(`Are you sure you want to delete ticket ${ticketId}?`)) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/tickets/${ticketId}`, {
+          method: "DELETE"
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          showSuccess("Ticket deleted successfully.");
+          loadTickets();
+          
+          // If we're currently editing this ticket, reset the form
+          if (currentEditTicketId === ticketId) {
+            resetForm();
+          }
+        } else {
+          showError(`Failed to delete ticket: ${result.error || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        showError("Error deleting ticket. Please try again.");
+      }
+    }
+
+    // Reset form
+    function resetForm() {
+      document.getElementById("ticketForm").reset();
+      document.getElementById("ticketId").disabled = false;
+      document.getElementById("scheduleInfo").classList.remove("show");
+      
+      isEditMode = false;
+      currentEditTicketId = null;
+      
+      document.querySelector("button[type='submit']").textContent = "Book Ticket";
+      document.getElementById("cancelButton").style.display = "none";
+      
+      setDefaultBookingDate();
+      clearMessages();
+    }
+
+    // Utility functions
+    function showSuccess(message) {
+      document.getElementById("successMessage").textContent = message;
+      document.getElementById("errorMessage").textContent = "";
+    }
+
+    function showError(message) {
+      document.getElementById("errorMessage").textContent = message;
+      document.getElementById("successMessage").textContent = "";
+    }
+
+    function clearMessages() {
+      document.getElementById("successMessage").textContent = "";
+      document.getElementById("errorMessage").textContent = "";
+    }
+  </script>
+</body>
+</html>
